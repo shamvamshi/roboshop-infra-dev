@@ -19,7 +19,9 @@ module "bastion" {
   sg_description = var.bastion_sg_description
   vpc_id = local.vpc_id
 }
+
 # bastion accepting connections from my laptop
+
 resource "aws_security_group_rule" "bastion_laptop" {
   type              = "ingress"
   from_port         = 22
