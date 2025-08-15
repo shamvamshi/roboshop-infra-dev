@@ -33,3 +33,15 @@ resource "aws_lb_listener" "backend_alb" {
     }
   }
 }
+
+resource "aws_route53_record" "backend_alb" {
+  zone_id = var.zone_id
+  name    = "*.backend.${var.zone_name}"
+  type    = "A"
+
+  alias {
+    name                   = module.backend_alb.dns_name
+    zone_id                = module.backend_alb.zone_id # this is the zone id of alb
+    evaluate_target_health = true
+  }
+}
