@@ -154,6 +154,16 @@ resource "aws_security_group_rule" "backend_alb_vpn" {
   security_group_id = module.backend-alb.sg_id
   }
 
+resource "aws_security_group_rule" "mongodb_vpn_ssh" { 
+  count = length(var.mongodb_ports_vpn)
+  type              = "ingress"
+  from_port         = var.mongodb_ports_vpn[count.index]
+  to_port           = var.mongodb_ports_vpn[count.index]
+  protocol          = "tcp"
+  source_security_group_id = module.vpn.sg_id  # source is vpn, because it is coming from vpn
+  security_group_id = module.mongodb.sg_id
+  }
+
 resource "aws_security_group_rule" "redis_vpn_ssh" { 
   count = length(var.redis_ports_vpn)
   type              = "ingress"
