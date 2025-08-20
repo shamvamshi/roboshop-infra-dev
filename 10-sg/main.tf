@@ -211,7 +211,7 @@ resource "aws_security_group_rule" "catalogue_backend-alb" {
   to_port           = 8080
   protocol          = "tcp"
   source_security_group_id = module.backend-alb.sg_id
-  security_group_id = module.catalogue.sg_id
+  security_group_id = module.catalogue.sg_id # where are you creating
   }
 
 resource "aws_security_group_rule" "catalogue_vpn_ssh" { 

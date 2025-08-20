@@ -1,16 +1,16 @@
 resource "aws_lb_target_group" "catalogue" {
   name     = "${var.project}-${var.environment}-catalogue" # roboshop-dev-catalogue
-  port     = 8080 # cactalogue default port no is 8080
+  port     = 8080 # catalogue default port no is 8080
   protocol = "HTTP"
   vpc_id   = local.vpc_id
 
   health_check {
     healthy_threshold = 2
-    interval = 5
-    matcher = "200-299"
-    path = "/health"
+    interval = 5 # for every 5 seconds healthcheck should happen
+    matcher = "200-299" # success responces
+    path = "/health" # foe every backend there is a health you can check whether it is healthy or not
     port = 8080
-    timeout = 2
+    timeout = 2 # i should get responce in 2 sec
     unhealthy_threshold = 3
   }
 }
@@ -30,7 +30,7 @@ resource "aws_instance" "catalogue" {
 }
 
 
-resource "terraform_data" "catalogue" {
+resource "terraform_data" "catalogue" {  # configuring data
   triggers_replace = [
     aws_instance.catalogue.id
   ]
