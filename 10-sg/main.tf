@@ -249,3 +249,4 @@ resource "aws_security_group_rule" "mongodb_catalogue" { # it means mongodb shou
   source_security_group_id = module.catalogue.sg_id
   security_group_id = module.mongodb.sg_id
   }
+
