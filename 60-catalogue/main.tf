@@ -3,6 +3,7 @@ resource "aws_lb_target_group" "catalogue" {
   port     = 8080 # catalogue default port no is 8080
   protocol = "HTTP"
   vpc_id   = local.vpc_id
+  deregistration_delay = 120
 
   health_check {
     healthy_threshold = 2
@@ -50,8 +51,38 @@ resource "terraform_data" "catalogue" {  # configuring data
   provisioner "remote-exec" {
     inline = [ 
       "chmod +x /tmp/catalogue.sh",
-      "sudo sh /tmp/catalogue.sh catalogue"
+      "sudo sh /tmp/catalogue.sh catalogue ${var.environment}"
      ]
    }
 }
 
+resource "aws_ec2_instance_state" "catalogue" { # stopping the catalogue instance
+  instance_id = aws_instance.catalogue.id
+  state       = "stopped"
+  depends_on = [terraform_data.catalogue]
+}
+
+resource "aws_ami_from_instance" "catalogue" { # taking ami from instance
+  name               = "${var.project}-${var.environment}-catalogue"
+  source_instance_id = aws_instance.catalogue.id
+  depends_on = [aws_ec2_instance_state.catalogue]
+  tags = merge(
+    local.common_tags,
+    {
+      Name = "${var.project}-${var.environment}-catalogue"
+    }
+  )
+}
+
+
+resource "terraform_data" "catalogue_delete" {  # configuring data
+  triggers_replace = [
+    aws_instance.catalogue.id
+  ]
+
+  # make sure you have aws configure in your laptop
+  provisioner "local-exec" {
+    command = "aws ec2 terminate-instances --instance-ids ${aws_instance.catalogue.id}"
+   }
+   depends_on = [aws_ami_from_instance.catalogue]
+}
