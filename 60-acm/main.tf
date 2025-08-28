@@ -9,7 +9,7 @@ resource "aws_acm_certificate" "shamrobos" {
     }
   )
   lifecycle {
-    create_before_destroy = true
+    create_before_destroy = true # This tells Terraform: When replacing a resource, always create the new one before destroying the old one.
   }
 }
 

@@ -12,17 +12,20 @@ resource "aws_instance" "mongodb" {
   )
 }
 
-resource "terraform_data" "mongodb" {
+# This Terraform block says:
+# "Whenever my MongoDB EC2 is created, copy my bootstrap script into it, SSH in, and run the script so MongoDB gets installed and configured automatically for my environment."
+
+resource "terraform_data" "mongodb" { # “If the MongoDB instance changes, re-run this provisioner.”
   triggers_replace = [
     aws_instance.mongodb.id
   ]
 
-  provisioner "file" {
+  provisioner "file" { # Copies the bootstrap.sh script from your local Terraform folder into the EC2 instance at /tmp/bootstrap.sh.
     source      = "bootstrap.sh"
     destination = "/tmp/bootstrap.sh"
   }
 
-  connection {
+  connection { # Tells Terraform how to connect into the EC2 instance:
      type = "ssh"
      user = "ec2-user"
      password = "DevOps321"
