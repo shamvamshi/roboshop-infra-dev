@@ -1,6 +1,6 @@
 variable "components" {
   default = {
-    catalogue = {
+    catalogue = { # catalogue is key and rule priority is value
         rule_priority = 10
     }
     user = {
