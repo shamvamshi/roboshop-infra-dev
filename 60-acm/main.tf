@@ -1,5 +1,5 @@
 resource "aws_acm_certificate" "shamrobos" {
-  domain_name       = "*.${var.zone_name}"
+  domain_name       = "dev.${var.zone_name}"
   validation_method = "DNS"
 
   tags = merge(
